@@ -5,12 +5,12 @@ set -eu
 : "${OBJECTSTORE_S3_BUCKET:?Use a new dedicated non-versioned bucket}"
 # The official image copies config files only when it installs or upgrades; keep ours current on every start.
 cp /usr/src/nextcloud/config/zzz-christiancloud.config.php /var/www/html/config/zzz-christiancloud.config.php
-chown www-data:www-data /var/www/html/config/zzz-christiancloud.config.php
-occ() { su -p www-data -s /bin/sh -c 'php /var/www/html/occ "$@"' -- sh "$@"; }
+# The image runs hooks as www-data when it starts as root, so occ is usually run directly.
+if [ "$(id -u)" = 0 ]; then occ() { su -p www-data -s /bin/sh -c 'php /var/www/html/occ "$@"' -- sh "$@"; }; else occ() { php /var/www/html/occ "$@"; }; fi
 for app in user_oidc eurooffice christiancloud; do
   mkdir -p "/var/www/html/custom_apps/$app"
   cp -a "/opt/christiancloud/apps/$app/." "/var/www/html/custom_apps/$app/"
-  chown -R www-data:www-data "/var/www/html/custom_apps/$app"
+  [ "$(id -u)" != 0 ] || chown -R www-data:www-data "/var/www/html/custom_apps/$app"
   occ app:enable "$app"
 done
 occ config:app:set files default_quota --value=3000000000
@@ -26,6 +26,5 @@ occ theming:config slogan 'Your files, together.'
 occ theming:config logo /opt/christiancloud/brand/icons/cloud-mark.svg
 occ theming:config favicon /opt/christiancloud/brand/icons/cloud-256.png
 occ maintenance:update:htaccess
-occ background:cron
-# Official apache image provides busybox cron, but does not start it itself.
-busybox crond -b -l 8
+# Background jobs: system cron when this process may start it, otherwise on page loads.
+if [ "$(id -u)" = 0 ] && command -v busybox >/dev/null 2>&1 && busybox crond -b -l 8 2>/dev/null; then occ background:cron; else occ background:ajax; fi
