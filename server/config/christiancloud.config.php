@@ -1,7 +1,13 @@
 <?php
 require_once '/opt/christiancloud/storage/CappedObjectStore.php';
 $CONFIG = [
-    'eurooffice' => ['jwt_secret' => getenv('OFFICE_JWT_SECRET')],
+    'eurooffice' => [
+        'jwt_secret' => getenv('OFFICE_JWT_SECRET'), 'jwt_header' => 'AuthorizationJwt',
+        'customization_loaderName' => 'Christian Office',
+        'customization_loaderLogo' => 'https://office.christiansystems.org/christian-office/brand/icons/office-mark.svg',
+        'customization_logo' => ['image' => 'https://office.christiansystems.org/christian-office/brand/icons/office-mark.svg', 'url' => 'https://office.christiansystems.org/'],
+        'customization_customer' => ['name' => 'Christian Systems', 'www' => 'https://christiansystems.org', 'info' => 'Christian Office — free and open source'],
+    ],
     'default_quota' => '3000000000',
     'skeletondirectory' => '',
     'defaultapp' => 'christiancloud',
