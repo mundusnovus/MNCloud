@@ -14,5 +14,10 @@
       "url": "https://github.com/nextcloud-releases/eurooffice/releases/download/v11.0.6/eurooffice-v11.0.6.tar.gz",
       "sha256": "12a0cb41694bdf9e29a99d569069d15cc711bf54290ef8ae24d4b668ceeab9fd"
     }
+  },
+  "desktop": {
+    "repository": "https://github.com/nextcloud/desktop",
+    "tag": "v35.0.1",
+    "license": "GPL-2.0-or-later"
   }
 }

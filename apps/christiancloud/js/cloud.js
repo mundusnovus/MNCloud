@@ -75,7 +75,17 @@ const start = () => {
     if(!e.directory) actions.append(button('Download',()=>download(e),'Download '+e.name));
     actions.append(button('Rename',async()=>{const n=await ask('Rename','File name',e.name);if(n && n!==e.name) await move(e,folder+valid(n));},'Rename '+e.name));
     actions.append(button('Move',async()=>{const p=await ask('Move','Destination folder','/','Use a folder path, such as /Documents.'); if(p!==null){const parts=p.split('/').filter(Boolean);parts.forEach(valid);await move(e,'/'+parts.join('/')+(parts.length?'/':'')+e.name);}},'Move '+e.name));
-    actions.append(button('Share',async()=>{
+    // Share with a person: they find it in their own Cloud and can edit it with you, live, in Christian Office.
+    actions.append(button('Share with…',async()=>{
+     const who=await ask('Share with a person','Their Christian Systems name','','They can open and edit it with you at the same time. Use their name without the @.');
+     if(!who)return;
+     const name=who.trim().replace(/^@/,'').toLowerCase();
+     const r=await request('/ocs/v2.php/apps/files_sharing/api/v1/shares?format=json',{method:'POST',body:new URLSearchParams({path:decodeURIComponent(e.href.slice(dav.length)),shareType:'0',shareWith:name,permissions:e.directory?'31':'19'})});
+     const data=(await r.json()).ocs;
+     if(!r.ok||data?.meta?.statuscode>=400)throw Error(/not.*(exist|found)|unknown/i.test(data?.meta?.message||'')?'@'+name+' has not opened Christian Cloud yet. Ask them to sign in once, then share again.':(data?.meta?.message||'Sharing failed.'));
+     say('Shared with @'+name+'. They can edit it with you.');
+    },'Share '+e.name+' with a person'));
+    actions.append(button('Link',async()=>{
      const r=await request('/ocs/v2.php/apps/files_sharing/api/v1/shares?format=json',{method:'POST',body:new URLSearchParams({path:decodeURIComponent(e.href.slice(dav.length)),shareType:'3',permissions:'1'})});
      const data=(await r.json()).ocs; if(!data?.data?.url)throw Error(data?.meta?.message || 'Sharing failed.');
      await ask('Read-only link','Copy this link',data.data.url,'Anyone with this link can read this file. Manage links in the sharing settings.');

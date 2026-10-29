@@ -1,0 +1,68 @@
+# Christian Cloud for the desktop: Nextcloud's desktop client (pinned in upstream.lock.json), branded by
+# desktop/apply-branding.sh and built with Nextcloud's own tools: mac-crafter on macOS, the AppImage container on
+# Linux. A tag desktop-v* publishes a GitHub release. Nextcloud desktop: GPL-2.0-or-later.
+name: Desktop
+on:
+  workflow_dispatch:
+  push:
+    tags: ['desktop-v*']
+env:
+  UPSTREAM_REF: v35.0.1
+jobs:
+  macos:
+    runs-on: macos-15
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: cs }
+      - uses: actions/checkout@v4
+        with: { repository: nextcloud/desktop, ref: '${{ env.UPSTREAM_REF }}', path: desktop }
+      - run: sh cs/desktop/apply-branding.sh desktop
+      - uses: maxim-lobanov/setup-xcode@v1
+        with: { xcode-version: latest-stable }
+      - run: brew install inkscape create-dmg || true
+      - name: Build with mac-crafter
+        working-directory: desktop/admin/osx/mac-crafter
+        run: |
+          swift run mac-crafter build \
+            --build-path "$RUNNER_TEMP/build" --product-path "$RUNNER_TEMP/product" --arch arm64 \
+            --build-type Release --app-name "Christian Cloud" \
+            --override-server-url https://cloud.christiansystems.org --force-override-server-url \
+            --disable-auto-updater "$GITHUB_WORKSPACE/desktop"
+      - name: Sign for this machine's Gatekeeper and make the disk image
+        run: |
+          APP=$(find "$RUNNER_TEMP/product" -maxdepth 2 -name '*.app' | head -1)
+          test -n "$APP"
+          # Without an Apple Developer ID, an ad-hoc signature over the whole bundle keeps macOS from calling it damaged.
+          codesign --force --deep --sign - "$APP"
+          codesign --verify --deep --strict "$APP"
+          mkdir -p dmg && cp -R "$APP" dmg/ && ln -s /Applications dmg/Applications
+          hdiutil create -volname "Christian Cloud" -srcfolder dmg -ov -format UDZO "Christian-Cloud-macOS-arm64.dmg"
+      - uses: actions/upload-artifact@v4
+        with: { name: christian-cloud-macos, path: Christian-Cloud-macOS-arm64.dmg }
+  linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    container: ghcr.io/nextcloud/continuous-integration-client-appimage-qt6:client-appimage-el9-6.11.2-4
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: cs }
+      - uses: actions/checkout@v4
+        with: { repository: nextcloud/desktop, ref: '${{ env.UPSTREAM_REF }}', path: desktop }
+      - run: sh cs/desktop/apply-branding.sh desktop
+      - name: Build the AppImage
+        id: build
+        working-directory: desktop
+        run: BUILDNR=${GITHUB_RUN_ID} BUILD_UPDATER=OFF DESKTOP_CLIENT_ROOT=$(pwd) EXECUTABLE_NAME=christiancloud QT_BASE_DIR=/root/linux-gcc-x86_64 /bin/bash -c "./admin/linux/build-appimage.sh"
+      - uses: actions/upload-artifact@v4
+        with: { name: christian-cloud-linux, path: 'desktop/**/*.AppImage' }
+  publish:
+    needs: [macos, linux]
+    if: ${{ always() && startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: dist, merge-multiple: true }
+      - uses: softprops/action-gh-release@v2
+        with: { name: 'Christian Cloud Desktop ${{ github.ref_name }}', files: 'dist/**', fail_on_unmatched_files: false }
