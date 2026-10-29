@@ -3,6 +3,9 @@ set -eu
 : "${OIDC_CLIENT_SECRET:?Set the Cloud OIDC client secret}"
 : "${OFFICE_JWT_SECRET:?Set the shared Office JWT secret}"
 : "${OBJECTSTORE_S3_BUCKET:?Use a new dedicated non-versioned bucket}"
+# The official image copies config files only when it installs or upgrades; keep ours current on every start.
+cp /usr/src/nextcloud/config/zzz-christiancloud.config.php /var/www/html/config/zzz-christiancloud.config.php
+chown www-data:www-data /var/www/html/config/zzz-christiancloud.config.php
 occ() { su -p www-data -s /bin/sh -c 'php /var/www/html/occ "$@"' -- sh "$@"; }
 for app in user_oidc eurooffice christiancloud; do
   mkdir -p "/var/www/html/custom_apps/$app"

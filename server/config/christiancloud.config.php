@@ -1,5 +1,12 @@
 <?php
-require_once '/opt/christiancloud/storage/CappedObjectStore.php';
+// Nextcloud reads config files before its own classes can load, so the capped store is loaded only when first
+// used (by then IObjectStore and S3 exist). This file may be read more than once per request.
+if (!defined('CHRISTIANCLOUD_STORE_AUTOLOAD')) {
+    define('CHRISTIANCLOUD_STORE_AUTOLOAD', true);
+    spl_autoload_register(static function (string $class): void {
+        if ($class === 'ChristianSystems\\CappedObjectStore') require_once '/opt/christiancloud/storage/CappedObjectStore.php';
+    });
+}
 $CONFIG = [
     'eurooffice' => [
         'jwt_secret' => getenv('OFFICE_JWT_SECRET'), 'jwt_header' => 'AuthorizationJwt',
