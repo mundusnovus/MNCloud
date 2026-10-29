@@ -55,7 +55,7 @@ class CappedObjectStore implements IObjectStore {
                 $this->store->writeObject($urn, $temp, $mimetype);
                 $this->execute('UPDATE christiancloud_objects SET bytes=?,pending=FALSE WHERE urn=?', [$bytes, $urn]);
             } finally { $this->unlock(); }
-        } finally { fclose($temp); }
+        } finally { if (is_resource($temp)) fclose($temp); } // the S3 client may already have closed it
     }
     public function deleteObject($urn) {
         $this->lock();

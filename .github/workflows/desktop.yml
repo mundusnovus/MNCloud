@@ -23,12 +23,18 @@ jobs:
       - run: brew install inkscape create-dmg || true
       - name: Build with mac-crafter
         working-directory: desktop/admin/osx/mac-crafter
+        shell: bash
         run: |
+          set -o pipefail
           swift run mac-crafter build \
             --build-path "$RUNNER_TEMP/build" --product-path "$RUNNER_TEMP/product" --arch arm64 \
             --build-type Release --app-name "Christian Cloud" \
             --override-server-url https://cloud.christiansystems.org --force-override-server-url \
-            --disable-auto-updater "$GITHUB_WORKSPACE/desktop"
+            --disable-auto-updater "$GITHUB_WORKSPACE/desktop" 2>&1 | tee "$RUNNER_TEMP/build.log"
+      - name: Show why the build failed
+        if: failure()
+        shell: bash
+        run: python3 -c "import sys,urllib.parse as u;t=open(sys.argv[1],errors='replace').read()[-6000:];print('::error title=mac-crafter::'+t.replace('%','%25').replace('\r','').replace('\n','%0A'))" "$RUNNER_TEMP/build.log"
       - name: Sign for this machine's Gatekeeper and make the disk image
         run: |
           APP=$(find "$RUNNER_TEMP/product" -maxdepth 2 -name '*.app' | head -1)
@@ -53,7 +59,14 @@ jobs:
       - name: Build the AppImage
         id: build
         working-directory: desktop
-        run: BUILDNR=${GITHUB_RUN_ID} BUILD_UPDATER=OFF DESKTOP_CLIENT_ROOT=$(pwd) EXECUTABLE_NAME=christiancloud QT_BASE_DIR=/root/linux-gcc-x86_64 /bin/bash -c "./admin/linux/build-appimage.sh"
+        shell: bash
+        run: |
+          set -o pipefail
+          BUILDNR=${GITHUB_RUN_ID} BUILD_UPDATER=OFF DESKTOP_CLIENT_ROOT=$(pwd) EXECUTABLE_NAME=christiancloud QT_BASE_DIR=/root/linux-gcc-x86_64 /bin/bash -c "./admin/linux/build-appimage.sh" 2>&1 | tee /tmp/build.log
+      - name: Show why the build failed
+        if: failure()
+        shell: bash
+        run: python3 -c "import sys;t=open(sys.argv[1],errors='replace').read()[-6000:];print('::error title=appimage::'+t.replace('%','%25').replace('\r','').replace('\n','%0A'))" /tmp/build.log
       - uses: actions/upload-artifact@v4
         with: { name: christian-cloud-linux, path: 'desktop/**/*.AppImage' }
   publish:
