@@ -1,0 +1,18 @@
+{
+  "nextcloud": {
+    "image": "nextcloud:33.0.10-apache@sha256:5ded1127972ea84c29792215f0621c71929ed315cc47be946b489c7a1c1ad305",
+    "source": "https://github.com/nextcloud/server/tree/v33.0.10"
+  },
+  "apps": {
+    "user_oidc": {
+      "version": "8.9.0",
+      "url": "https://github.com/nextcloud-releases/user_oidc/releases/download/v8.9.0/user_oidc-v8.9.0.tar.gz",
+      "sha256": "e3f8bc89d07e87993a805eab774b49a14c6b732edf5c9f705df2389596ab9e71"
+    },
+    "eurooffice": {
+      "version": "11.0.6",
+      "url": "https://github.com/nextcloud-releases/eurooffice/releases/download/v11.0.6/eurooffice-v11.0.6.tar.gz",
+      "sha256": "12a0cb41694bdf9e29a99d569069d15cc711bf54290ef8ae24d4b668ceeab9fd"
+    }
+  }
+}

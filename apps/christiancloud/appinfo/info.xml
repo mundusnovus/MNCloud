@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+ <id>christiancloud</id><name>Christian Cloud</name><summary>Your files, together.</summary>
+ <description>Christian Systems file hub and storage accounting.</description><version>0.1.0</version>
+ <licence>agpl</licence><author>Christian Systems</author><namespace>ChristianCloud</namespace>
+ <category>files</category><dependencies><nextcloud min-version="33" max-version="33"/></dependencies>
+ <background-jobs><job>OCA\ChristianCloud\BackgroundJob\Capacity</job></background-jobs>
+ <navigations><navigation><id>christiancloud</id><name>Christian Cloud</name><route>christiancloud.page.index</route><order>0</order></navigation></navigations>
