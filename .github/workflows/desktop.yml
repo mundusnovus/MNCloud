@@ -34,7 +34,7 @@ jobs:
       - name: Show why the build failed
         if: failure()
         shell: bash
-        run: python3 -c "import sys,urllib.parse as u;t=open(sys.argv[1],errors='replace').read()[-6000:];print('::error title=mac-crafter::'+t.replace('%','%25').replace('\r','').replace('\n','%0A'))" "$RUNNER_TEMP/build.log"
+        run: python3 -c "import sys,urllib.parse as u;L=open(sys.argv[1],errors='replace').read().splitlines();E=[l for i,l in enumerate(L) if 'error' in l.lower() and len(l)<400][:25];t=chr(10).join(E or L[-40:]);print('::error title=mac-crafter::'+t.replace('%','%25').replace('\r','').replace('\n','%0A'))" "$RUNNER_TEMP/build.log"
       - name: Sign for this machine's Gatekeeper and make the disk image
         run: |
           APP=$(find "$RUNNER_TEMP/product" -maxdepth 2 -name '*.app' | head -1)
@@ -66,7 +66,7 @@ jobs:
       - name: Show why the build failed
         if: failure()
         shell: bash
-        run: python3 -c "import sys;t=open(sys.argv[1],errors='replace').read()[-6000:];print('::error title=appimage::'+t.replace('%','%25').replace('\r','').replace('\n','%0A'))" /tmp/build.log
+        run: python3 -c "import sys;L=open(sys.argv[1],errors='replace').read().splitlines();E=[l for i,l in enumerate(L) if 'error' in l.lower() and len(l)<400][:25];t=chr(10).join(E or L[-40:]);print('::error title=appimage::'+t.replace('%','%25').replace('\r','').replace('\n','%0A'))" /tmp/build.log
       - uses: actions/upload-artifact@v4
         with: { name: christian-cloud-linux, path: 'desktop/**/*.AppImage' }
   publish:
