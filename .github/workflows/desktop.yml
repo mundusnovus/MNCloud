@@ -39,6 +39,8 @@ jobs:
         run: |
           APP=$(find "$RUNNER_TEMP/product" -maxdepth 2 -name '*.app' | head -1)
           test -n "$APP"
+          # Move our renamed libraries into Frameworks and point every link inside the app, or it quits at launch.
+          python3 cs/desktop/fix-mac-bundle.py "$APP"
           # Without an Apple Developer ID, an ad-hoc signature over the whole bundle keeps macOS from calling it damaged.
           codesign --force --deep --sign - "$APP"
           codesign --verify --deep --strict "$APP"
