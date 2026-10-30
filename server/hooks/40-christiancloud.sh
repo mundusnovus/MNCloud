@@ -21,6 +21,7 @@ occ user_oidc:provider 'Christian Systems' --clientid=christian-cloud --clientse
 occ config:app:set eurooffice DocumentServerUrl --value="${OFFICE_URL:-https://office.christiansystems.org/}"
 # AppConfig reads the JWT from system config; keep it out of occ arguments/logs.
 occ theming:config name 'Christian Cloud'
+occ config:app:set theming productName --value='Christian Cloud' > /dev/null
 occ theming:config color '#e3261c'
 occ theming:config slogan 'Your files, together.'
 occ theming:config logo /opt/christiancloud/brand/icons/cloud-mark.svg
