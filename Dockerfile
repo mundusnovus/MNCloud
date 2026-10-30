@@ -12,6 +12,7 @@ COPY server/storage/ /opt/christiancloud/storage/
 COPY server/config/christiancloud.config.php /usr/src/nextcloud/config/zzz-christiancloud.config.php
 COPY server/hooks/ /docker-entrypoint-hooks.d/before-starting/
 COPY server/apache.conf /etc/apache2/conf-available/christiancloud.conf
+COPY server/vhost.conf /etc/apache2/sites-available/000-default.conf
 # Apache runs PHP under the prefork MPM; make sure it is the only one loaded, then check the configuration.
 RUN (a2dismod -f mpm_event mpm_worker || true) && a2enmod mpm_prefork headers rewrite && a2enconf christiancloud \
  && ls /etc/apache2/mods-enabled/ | grep mpm && apache2ctl -t
