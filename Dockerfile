@@ -17,3 +17,6 @@ RUN (a2dismod -f mpm_event mpm_worker || true) && a2enmod mpm_prefork headers re
  && ls /etc/apache2/mods-enabled/ | grep mpm && apache2ctl -t
 ENV NEXTCLOUD_TRUSTED_DOMAINS=cloud.christiansystems.org PHP_MEMORY_LIMIT=512M PHP_UPLOAD_LIMIT=3G
 EXPOSE 80
+# The name must start with "apache" so Nextcloud's entrypoint still installs, upgrades and runs our hooks first.
+COPY --chmod=755 server/apache2-christiancloud /usr/local/bin/apache2-christiancloud
+CMD ["apache2-christiancloud"]

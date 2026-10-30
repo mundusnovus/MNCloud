@@ -1,0 +1,8 @@
+#!/bin/sh
+# Starts Apache for Christian Cloud. Railway's runtime can bring back files that an image layer deleted (the base
+# image removes Apache's event and worker MPMs that way), and Apache then refuses to start with "More than one MPM
+# loaded". Remove them again, right before Apache starts. Nextcloud's entrypoint runs this as root after its set-up.
+set -eu
+rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
+      /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf
+exec apache2-foreground "$@"
