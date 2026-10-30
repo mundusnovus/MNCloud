@@ -1,5 +1,0 @@
-Christian Cloud by Christian Systems, Christian Systems Affero License 1.0 (AGPL-3.0).
-Built on Nextcloud, copyright Nextcloud GmbH, ownCloud and contributors.
-Office integration: Euro-Office and Ascensio System SIA. Upstream licenses and notices remain in the installed packages.
-Source and build instructions: https://github.com/christiansystems/ChristianCloud
-Chancel by Christian Systems. See brand/LICENSE-Chancel.

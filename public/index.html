@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Christian Cloud</title>
+<meta name="theme-color" content="#140708">
+<link rel="icon" href="/brand/cloud.ico" sizes="any"><link rel="icon" type="image/svg+xml" href="/brand/cloud-icon.svg"><link rel="apple-touch-icon" href="/brand/cloud-180.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/brand/tokens.css">
+<link rel="stylesheet" href="/app.css">
+<script src="/app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to your files</a>
+<div class="shell">
+  <aside class="side" aria-label="Christian Cloud">
+    <a class="brand" href="/files/" data-go><img src="/brand/cloud-icon.svg" width="32" height="32" alt=""><span>Christian <b>Cloud</b></span></a>
+    <nav class="places" aria-label="Places">
+      <a href="/files/" data-go data-place="files"><svg viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3z"/></svg><span>Files</span></a>
+      <a href="/recent" data-go data-place="recent"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Recent</span></a>
+      <a href="/shared" data-go data-place="shared"><svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="9" r="3"/><path d="M2 19c0-3 3-5 6-5s6 2 6 5M12 19c0-3 2-5 5-5s5 2 5 5"/></svg><span>Shared<span class="wide"> with you</span></span></a>
+      <a href="/trash" data-go data-place="trash"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span>Trash</span></a>
+    </nav>
+    <div class="space" id="space" aria-live="polite"></div>
+    <nav class="more" aria-label="More">
+      <a href="/devices" data-go data-place="devices">Devices and apps</a>
+      <a href="https://office.christiansystems.org/">Christian Office</a>
+      <a href="https://christiansystems.org/downloads/">Sync this computer</a>
+    </nav>
+  </aside>
+  <div class="work">
+    <header class="top">
+      <form class="find" role="search" id="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search your Cloud" aria-label="Search your Cloud" autocomplete="off"></form>
+      <div class="who" id="who"></div>
+    </header>
+    <main id="main" tabindex="-1"></main>
+  </div>
+</div>
+<div class="drop" id="drop" aria-hidden="true"><div><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg><p>Drop to upload here</p></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog id="dialog" class="sheet"></dialog>
+<input type="file" id="picker" multiple hidden>
+</body>
+</html>

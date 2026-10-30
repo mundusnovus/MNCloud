@@ -1,5 +1,10 @@
 .git
+.github
 .upstream
+.data
 .env*
 build
+desktop
+test
 __pycache__
+.DS_Store

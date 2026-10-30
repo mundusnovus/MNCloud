@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Christian Office</title>
+<link rel="icon" type="image/svg+xml" href="/brand/cloud-icon.svg">
+<link rel="stylesheet" href="/brand/tokens.css">
+<style>
+  html, body { margin: 0; height: 100%; background: var(--cs-bg); color: var(--cs-fg); font: 15px/1.5 var(--cs-text); }
+  #editor { position: fixed; inset: 0; }
+  .wait { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; }
+  .wait h1 { font: 400 22px var(--cs-display); text-transform: uppercase; -webkit-font-smoothing: none; margin: 14px 0 6px; }
+  .wait img { width: 72px; image-rendering: pixelated; margin: 0 auto; animation: breathe 1.6s ease-in-out infinite; }
+  .wait a { color: var(--cs-accent); }
+  @keyframes breathe { 50% { opacity: .55; } }
+  @media (prefers-reduced-motion: reduce) { .wait img { animation: none; } }
+</style>
+<script src="/edit.js" defer></script>
+</head>
+<body>
+<div class="wait" id="wait" role="status"><div><img src="/brand/cloud-mark.svg" alt=""><h1 id="title">Opening</h1><p id="note">Getting your document ready.</p></div></div>
+<div id="editor"></div>
+</body>
+</html>
