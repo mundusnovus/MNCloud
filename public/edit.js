@@ -16,7 +16,7 @@
         r.config.events = {
           onAppReady: function () { clearTimeout(slow); document.getElementById('wait').hidden = true; },
           onRequestClose: function () { location.href = '/files/'; },
-          onError: function (e) { clearTimeout(slow); say('MNOffice ran into a problem', (e && e.data && e.data.errorDescription) || ''); document.getElementById('wait').hidden = false; }
+          onError: function () { clearTimeout(slow); }   // the editor shows its own message; ours would cover it
         };
         r.config.width = '100%'; r.config.height = '100%';
         new window.DocsAPI.DocEditor('editor', r.config);

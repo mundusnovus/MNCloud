@@ -10,6 +10,7 @@
   html, body { margin: 0; height: 100%; background: var(--mn-bg); color: var(--mn-fg); font: 15px/1.5 var(--mn-text); }
   #editor { position: fixed; inset: 0; }
   .wait { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; }
+  .wait[hidden] { display: none; }  /* display: grid above would otherwise keep it on screen once the editor is ready */
   .wait h1 { font: 400 22px var(--mn-display); text-transform: uppercase; -webkit-font-smoothing: none; margin: 14px 0 6px; }
   .wait img { width: 72px; image-rendering: pixelated; margin: 0 auto; animation: breathe 1.6s ease-in-out infinite; }
   .wait a { color: var(--mn-accent); }
