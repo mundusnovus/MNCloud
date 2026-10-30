@@ -1,4 +1,4 @@
-// WebDAV for the desktop sync app and the other Christian Systems apps, at /remote.php/dav/files/<name>/<path> with
+// WebDAV for the desktop sync app and the other Mundus Novus apps, at /remote.php/dav/files/<name>/<path> with
 // the same properties and chunked uploads Nextcloud clients expect. Requests carry a device key (Basic auth).
 import { mkdirSync, readdirSync, rmSync, createReadStream } from 'node:fs';
 import { join } from 'node:path';
@@ -16,7 +16,7 @@ export function createDav({ store, dataDir, publicUrl }) {
   function props(n, href, user) {
     const u = store.usage(n.owner), q = Math.max(0, Math.min(u.quota - u.used, u.serviceCapacity - u.serviceUsed));
     const perms = n.parent === null ? 'RGDNVCK' : n.dir ? 'RGDNVCK' : 'RGDNVW';
-    const fileid = String(n.id).padStart(8, '0') + 'christiancloud';
+    const fileid = String(n.id).padStart(8, '0') + 'mncloud';
     return '<d:response><d:href>' + x(href) + '</d:href><d:propstat><d:prop>' +
       '<d:displayname>' + x(n.parent === null ? '' : n.name) + '</d:displayname>' +
       '<d:getlastmodified>' + new Date(n.mtime).toUTCString() + '</d:getlastmodified>' +
@@ -73,14 +73,14 @@ export function createDav({ store, dataDir, publicUrl }) {
       if (!parent) throw new CloudError(409, 'That folder does not exist.');
       const got = await store.receive(req, user, +req.headers['content-length'] || +req.headers['oc-total-length'] || 0);
       const r = await store.write(parent, name, got, { by: who, ifMatch: req.headers['if-match'], ifNoneMatch: req.headers['if-none-match'] });
-      return send(r.created ? 201 : 204, { etag: '"' + r.node.etag + '"', 'oc-etag': '"' + r.node.etag + '"', 'oc-fileid': String(r.node.id).padStart(8, '0') + 'christiancloud', 'x-oc-mtime': 'accepted' });
+      return send(r.created ? 201 : 204, { etag: '"' + r.node.etag + '"', 'oc-etag': '"' + r.node.etag + '"', 'oc-fileid': String(r.node.id).padStart(8, '0') + 'mncloud', 'x-oc-mtime': 'accepted' });
     }
     if (method === 'MKCOL') {
       if (n) throw new CloudError(405, 'Something with that name is already here.');
       const { dir, name } = split(rel), parent = store.resolve(user, dir);
       if (!parent) throw new CloudError(409, 'That folder does not exist.');
       const d = store.mkdir(parent, name, who);
-      return send(201, { 'oc-fileid': String(d.id).padStart(8, '0') + 'christiancloud', 'oc-etag': '"' + d.etag + '"' });
+      return send(201, { 'oc-fileid': String(d.id).padStart(8, '0') + 'mncloud', 'oc-etag': '"' + d.etag + '"' });
     }
     if (method === 'DELETE') {
       if (!n) throw new CloudError(404, 'Not found.');
@@ -92,7 +92,7 @@ export function createDav({ store, dataDir, publicUrl }) {
       if (!n) throw new CloudError(404, 'Not found.');
       const to = destPath(req, user), { dir, name } = split(to), dest = store.resolve(user, dir), overwrite = req.headers.overwrite !== 'F';
       const r = method === 'MOVE' ? await store.move(n, dest, name, { overwrite, by: who }) : await store.copy(n, dest, name, { overwrite, by: who });
-      return send(r.replaced ? 204 : 201, { 'oc-etag': '"' + r.node.etag + '"', 'oc-fileid': String(r.node.id).padStart(8, '0') + 'christiancloud' });
+      return send(r.replaced ? 204 : 201, { 'oc-etag': '"' + r.node.etag + '"', 'oc-fileid': String(r.node.id).padStart(8, '0') + 'mncloud' });
     }
     throw new CloudError(405, 'That is not something Cloud can do.');
   }
@@ -116,7 +116,7 @@ export function createDav({ store, dataDir, publicUrl }) {
       const got = await store.receive(joined, who, 0);
       rmSync(dir, { recursive: true, force: true }); store.run('delete from uploads where id = ?', who + '-' + id);
       const r = await store.write(parent, name, got, { by: who, ifMatch: req.headers['if-match'] });
-      return send(r.created ? 201 : 204, { etag: '"' + r.node.etag + '"', 'oc-etag': '"' + r.node.etag + '"', 'oc-fileid': String(r.node.id).padStart(8, '0') + 'christiancloud' });
+      return send(r.created ? 201 : 204, { etag: '"' + r.node.etag + '"', 'oc-etag': '"' + r.node.etag + '"', 'oc-fileid': String(r.node.id).padStart(8, '0') + 'mncloud' });
     }
     if (req.method === 'PROPFIND') { res.writeHead(207, { 'content-type': 'application/xml' }); return res.end(multistatus('')); }
     throw new CloudError(405, 'Not supported.');

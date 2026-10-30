@@ -1,4 +1,4 @@
-/* Opens a Cloud file in Christian Office. Cloud signs the editor settings; everyone on the same version shares one
+/* Opens a Cloud file in MNOffice. Cloud signs the editor settings; everyone on the same version shares one
    document key, so co-editors see each other's changes as they type. */
 (function () {
   'use strict';
@@ -7,19 +7,19 @@
   fetch('/api/editor/' + id + '?lang=' + encodeURIComponent((navigator.language || 'en').slice(0, 2)), { credentials: 'same-origin' })
     .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || 'This document cannot be opened.'); return j; }); })
     .then(function (r) {
-      document.title = r.item.name + ' · Christian Office';
+      document.title = r.item.name + ' · MNOffice';
       var s = document.createElement('script');
       s.src = r.api;
       s.onload = function () {
         r.config.events = {
           onAppReady: function () { document.getElementById('wait').hidden = true; },
           onRequestClose: function () { location.href = '/files/'; },
-          onError: function (e) { say('Christian Office ran into a problem', (e && e.data && e.data.errorDescription) || ''); document.getElementById('wait').hidden = false; }
+          onError: function (e) { say('MNOffice ran into a problem', (e && e.data && e.data.errorDescription) || ''); document.getElementById('wait').hidden = false; }
         };
         r.config.width = '100%'; r.config.height = '100%';
         new window.DocsAPI.DocEditor('editor', r.config);
       };
-      s.onerror = function () { say('Christian Office is not answering', 'Try again in a moment.'); };
+      s.onerror = function () { say('MNOffice is not answering', 'Try again in a moment.'); };
       document.head.appendChild(s);
     })
     .catch(function (e) { say('Not here', e.message); });

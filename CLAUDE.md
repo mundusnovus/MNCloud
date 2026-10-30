@@ -1,4 +1,4 @@
-# ChristianCloud
+# MNCloud
 
 Read and follow AGENTS.md.
 

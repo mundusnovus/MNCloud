@@ -1,4 +1,4 @@
-// Christian Office in Christian Cloud. Cloud tells the document server (office.christiansystems.org) what to open,
+// MNOffice in MNCloud. Cloud tells the document server (office.mundusnovus.org) what to open,
 // signed with the shared secret; the server fetches the file from Cloud with a short-lived signed link and sends the
 // edited document back through a signed callback, which Cloud saves as a new version. Everyone who opens the same
 // version gets the same document key, so they edit it together, live.
@@ -32,8 +32,8 @@ export function createOffice({ store, officeUrl, secret, publicUrl }) {
   const docKey = (n) => (n.id + '-' + n.etag).replace(/[^0-9A-Za-z._=-]/g, '').slice(0, 120);
 
   function editorConfig(n, user, perm, lang) {
-    if (!enabled) throw new CloudError(503, 'Christian Office is not connected.');
-    const type = officeType(n.name); if (!type) throw new CloudError(415, 'Christian Office cannot open this kind of file.');
+    if (!enabled) throw new CloudError(503, 'MNOffice is not connected.');
+    const type = officeType(n.name); if (!type) throw new CloudError(415, 'MNOffice cannot open this kind of file.');
     const canEdit = (perm === 'owner' || perm === 'edit') && EDITABLE.includes(extOf(n.name));
     const config = {
       document: { fileType: extOf(n.name), key: docKey(n), title: n.name, url: fileLink(n),
@@ -46,8 +46,8 @@ export function createOffice({ store, officeUrl, secret, publicUrl }) {
         coEditing: { mode: 'fast', change: true },
         customization: {
           autosave: true, forcesave: false, compactHeader: false, toolbarNoTabs: false, uiTheme: 'default-light',
-          logo: { image: officeUrl + '/christian-office/brand/icons/office-mark.svg', url: officeUrl + '/' },
-          customer: { name: 'Christian Systems', www: 'https://christiansystems.org', info: 'Christian Office is free and open source.', logo: officeUrl + '/christian-office/brand/icons/office-mark.svg' },
+          logo: { image: officeUrl + '/mn-office/brand/icons/office-mark.svg', url: officeUrl + '/' },
+          customer: { name: 'Mundus Novus', www: 'https://mundusnovus.org', info: 'MNOffice is free and open source.', logo: officeUrl + '/mn-office/brand/icons/office-mark.svg' },
           goback: { url: publicUrl + '/files/' + (n.parent || ''), text: 'Back to Cloud', blank: false },
           feedback: false, help: false, plugins: false, hideRightMenu: false,
         },

@@ -1,4 +1,4 @@
-# Christian Cloud for the desktop: Nextcloud's desktop client (pinned in upstream.lock.json), branded by
+# MNCloud for the desktop: Nextcloud's desktop client (pinned in upstream.lock.json), branded by
 # desktop/apply-branding.sh and built with Nextcloud's own tools: mac-crafter on macOS, the AppImage container on
 # Linux. A tag desktop-v* publishes a GitHub release. Nextcloud desktop: GPL-2.0-or-later.
 name: Desktop
@@ -28,8 +28,8 @@ jobs:
           set -o pipefail
           swift run mac-crafter build \
             --build-path "$RUNNER_TEMP/build" --product-path "$RUNNER_TEMP/product" --arch arm64 \
-            --build-type Release --app-name "Christian Cloud" \
-            --override-server-url https://cloud.christiansystems.org --force-override-server-url \
+            --build-type Release --app-name "MNCloud" \
+            --override-server-url https://cloud.mundusnovus.org --force-override-server-url \
             --disable-auto-updater "$GITHUB_WORKSPACE/desktop" 2>&1 | tee "$RUNNER_TEMP/build.log"
       - name: Show why the build failed
         if: failure()
@@ -45,9 +45,9 @@ jobs:
           codesign --force --deep --sign - "$APP"
           codesign --verify --deep --strict "$APP"
           mkdir -p dmg && cp -R "$APP" dmg/ && ln -s /Applications dmg/Applications
-          hdiutil create -volname "Christian Cloud" -srcfolder dmg -ov -format UDZO "Christian-Cloud-macOS-arm64.dmg"
+          hdiutil create -volname "MNCloud" -srcfolder dmg -ov -format UDZO "MNCloud-macOS-arm64.dmg"
       - uses: actions/upload-artifact@v4
-        with: { name: christian-cloud-macos, path: Christian-Cloud-macOS-arm64.dmg }
+        with: { name: mn-cloud-macos, path: MNCloud-macOS-arm64.dmg }
   linux:
     runs-on: ubuntu-latest
     timeout-minutes: 240
@@ -76,13 +76,13 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          BUILDNR=${GITHUB_RUN_ID} BUILD_UPDATER=OFF DESKTOP_CLIENT_ROOT=$(pwd) EXECUTABLE_NAME=christiancloud QT_BASE_DIR=/root/linux-gcc-x86_64 /bin/bash -c "./admin/linux/build-appimage.sh" 2>&1 | tee /tmp/build.log
+          BUILDNR=${GITHUB_RUN_ID} BUILD_UPDATER=OFF DESKTOP_CLIENT_ROOT=$(pwd) EXECUTABLE_NAME=mncloud QT_BASE_DIR=/root/linux-gcc-x86_64 /bin/bash -c "./admin/linux/build-appimage.sh" 2>&1 | tee /tmp/build.log
       - name: Show why the build failed
         if: failure()
         shell: bash
         run: python3 cs/desktop/why-failed.py appimage /tmp/build.log
       - uses: actions/upload-artifact@v4
-        with: { name: christian-cloud-linux, path: 'desktop/**/*.AppImage' }
+        with: { name: mn-cloud-linux, path: 'desktop/**/*.AppImage' }
   publish:
     needs: [macos, linux]
     if: ${{ always() && startsWith(github.ref, 'refs/tags/') }}
@@ -92,4 +92,4 @@ jobs:
       - uses: actions/download-artifact@v4
         with: { path: dist, merge-multiple: true }
       - uses: softprops/action-gh-release@v2
-        with: { name: 'Christian Cloud Desktop ${{ github.ref_name }}', files: 'dist/**', fail_on_unmatched_files: false }
+        with: { name: 'MNCloud Desktop ${{ github.ref_name }}', files: 'dist/**', fail_on_unmatched_files: false }

@@ -1,4 +1,4 @@
-// Christian Cloud end to end: the real server with a folder for file contents, a stand-in Christian Systems sign-in
+// MNCloud end to end: the real server with a folder for file contents, a stand-in Mundus Novus sign-in
 // (it signs real RS256 tokens) and a stand-in document server, driven over HTTP.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -22,7 +22,7 @@ async function fakeFetch(url, o = {}) {
   const res = (body) => new Response(JSON.stringify(body), { status: 200, headers: { 'content-type': 'application/json' } });
   if (u.pathname === '/.well-known/openid-configuration') return res({ issuer: ISSUER, authorization_endpoint: ISSUER + '/oauth/authorize', token_endpoint: ISSUER + '/oauth/token', jwks_uri: ISSUER + '/oauth/jwks' });
   if (u.pathname === '/oauth/jwks') return res({ keys: [jwk] });
-  if (u.pathname === '/oauth/token') { const p = new URLSearchParams(o.body), c = codes.get(p.get('code')); return res({ access_token: 'a', id_token: idToken({ iss: ISSUER, aud: 'christian-cloud', sub: c.name, name: c.display, nonce: c.nonce, exp: Math.floor(Date.now() / 1000) + 300 }) }); }
+  if (u.pathname === '/oauth/token') { const p = new URLSearchParams(o.body), c = codes.get(p.get('code')); return res({ access_token: 'a', id_token: idToken({ iss: ISSUER, aud: 'mn-cloud', sub: c.name, name: c.display, nonce: c.nonce, exp: Math.floor(Date.now() / 1000) + 300 }) }); }
   return new Response('{}', { status: 404 });
 }
 
@@ -107,7 +107,7 @@ test('3 GB each and the service cap', async () => {
     assert.equal((await a.call('PUT', 'upload?parent=' + ra + '&name=a.bin', Buffer.alloc(80))).status, 201);
     assert.equal((await a.call('PUT', 'upload?parent=' + ra + '&name=b.bin', Buffer.alloc(30))).status, 507); // over Amy's 100
     assert.equal((await b.call('PUT', 'upload?parent=' + rb + '&name=c.bin', Buffer.alloc(75))).status, 507); // fits Bo (75 of 100), not the service (80 + 75 > 150)
-    assert.equal((await b.call('PUT', 'upload?parent=' + rb + '&name=c.bin', Buffer.alloc(75))).error, 'Christian Cloud is full for now. Your file was not saved.');
+    assert.equal((await b.call('PUT', 'upload?parent=' + rb + '&name=c.bin', Buffer.alloc(75))).error, 'MNCloud is full for now. Your file was not saved.');
     assert.equal((await b.call('PUT', 'upload?parent=' + rb + '&name=d.bin', Buffer.alloc(50))).status, 201);
   } finally { t.stop(); }
 });
@@ -116,7 +116,7 @@ test('device sign-in (Login Flow v2), WebDAV and chunked uploads', async () => {
   const t = await start();
   try {
     const ann = await t.signIn('ann', 'Ann');
-    const flow = await (await t.raw('POST', '/index.php/login/v2', { headers: { 'user-agent': 'ChristianSprite' } })).json();
+    const flow = await (await t.raw('POST', '/index.php/login/v2', { headers: { 'user-agent': 'MNSprite' } })).json();
     const path = new URL(flow.login).pathname;
     assert.equal((await t.raw('POST', '/login/v2/poll', { body: 'token=' + flow.poll.token, headers: { 'content-type': 'application/x-www-form-urlencoded' } })).status, 404);
     assert.equal((await t.raw('GET', path)).status, 302); // not signed in: off to sign in first
@@ -128,17 +128,17 @@ test('device sign-in (Login Flow v2), WebDAV and chunked uploads', async () => {
     assert.equal((await t.raw('POST', '/login/v2/poll', { body: 'token=' + flow.poll.token, headers: { 'content-type': 'application/x-www-form-urlencoded' } })).status, 404); // only once
     const auth = { authorization: 'Basic ' + Buffer.from('ann:' + got.appPassword).toString('base64') }, dav = '/remote.php/dav/files/ann';
     assert.equal((await t.raw('PROPFIND', dav + '/')).status, 401);
-    assert.equal((await t.raw('MKCOL', dav + '/ChristianSprite', { headers: auth })).status, 201);
-    const put = await t.raw('PUT', dav + '/ChristianSprite/lantern.asprite.json', { headers: { ...auth, 'if-none-match': '*' }, body: '{"format":"christian-sprite"}' });
+    assert.equal((await t.raw('MKCOL', dav + '/MNSprite', { headers: auth })).status, 201);
+    const put = await t.raw('PUT', dav + '/MNSprite/lantern.asprite.json', { headers: { ...auth, 'if-none-match': '*' }, body: '{"format":"mn-sprite"}' });
     assert.equal(put.status, 201); const etag = put.headers.get('etag');
-    assert.equal((await t.raw('PUT', dav + '/ChristianSprite/lantern.asprite.json', { headers: { ...auth, 'if-match': '"stale"' }, body: 'x' })).status, 412);
-    assert.equal((await t.raw('PUT', dav + '/ChristianSprite/lantern.asprite.json', { headers: { ...auth, 'if-match': etag }, body: '{"v":2}' })).status, 204);
-    const pf = await (await t.raw('PROPFIND', dav + '/ChristianSprite', { headers: { ...auth, depth: '1' } })).text();
+    assert.equal((await t.raw('PUT', dav + '/MNSprite/lantern.asprite.json', { headers: { ...auth, 'if-match': '"stale"' }, body: 'x' })).status, 412);
+    assert.equal((await t.raw('PUT', dav + '/MNSprite/lantern.asprite.json', { headers: { ...auth, 'if-match': etag }, body: '{"v":2}' })).status, 204);
+    const pf = await (await t.raw('PROPFIND', dav + '/MNSprite', { headers: { ...auth, depth: '1' } })).text();
     assert.match(pf, /lantern\.asprite\.json/); assert.match(pf, /<oc:fileid>\d+<\/oc:fileid>/); assert.match(pf, /<oc:permissions>RGDNVW<\/oc:permissions>/);
-    assert.equal(await (await t.raw('GET', dav + '/ChristianSprite/lantern.asprite.json', { headers: auth })).text(), '{"v":2}');
-    assert.equal((await (await t.raw('GET', dav + '/ChristianSprite/lantern.asprite.json', { headers: { ...auth, range: 'bytes=0-1' } }))).status, 206);
-    assert.equal((await t.raw('MOVE', dav + '/ChristianSprite/lantern.asprite.json', { headers: { ...auth, destination: 'http://cloud.test' + dav + '/lantern.asprite.json' } })).status, 201);
-    assert.equal((await t.raw('COPY', dav + '/lantern.asprite.json', { headers: { ...auth, destination: 'http://cloud.test' + dav + '/ChristianSprite/copy.json' } })).status, 201);
+    assert.equal(await (await t.raw('GET', dav + '/MNSprite/lantern.asprite.json', { headers: auth })).text(), '{"v":2}');
+    assert.equal((await (await t.raw('GET', dav + '/MNSprite/lantern.asprite.json', { headers: { ...auth, range: 'bytes=0-1' } }))).status, 206);
+    assert.equal((await t.raw('MOVE', dav + '/MNSprite/lantern.asprite.json', { headers: { ...auth, destination: 'http://cloud.test' + dav + '/lantern.asprite.json' } })).status, 201);
+    assert.equal((await t.raw('COPY', dav + '/lantern.asprite.json', { headers: { ...auth, destination: 'http://cloud.test' + dav + '/MNSprite/copy.json' } })).status, 201);
     assert.equal((await t.raw('DELETE', dav + '/lantern.asprite.json', { headers: auth })).status, 204);
     assert.equal((await t.raw('PROPFIND', '/remote.php/dav/files/ben/', { headers: auth })).status, 403);
     // chunked upload, the way the desktop app sends big files
@@ -149,13 +149,13 @@ test('device sign-in (Login Flow v2), WebDAV and chunked uploads', async () => {
     assert.equal((await t.raw('MOVE', up + '/.file', { headers: { ...auth, destination: 'http://cloud.test' + dav + '/big.txt' } })).status, 201);
     assert.equal(await (await t.raw('GET', dav + '/big.txt', { headers: auth })).text(), 'hello world');
     // what the desktop app checks first
-    assert.equal((await (await t.raw('GET', '/status.php')).json()).productname, 'Christian Cloud');
+    assert.equal((await (await t.raw('GET', '/status.php')).json()).productname, 'MNCloud');
     assert.equal((await (await t.raw('GET', '/ocs/v2.php/cloud/user?format=json', { headers: auth })).json()).ocs.data.id, 'ann');
     assert.equal((await ann.call('GET', 'devices')).devices.length, 1);
-    // the other Christian Systems apps reach Cloud across sites; other sites do not
-    const pre = await t.raw('OPTIONS', dav + '/', { headers: { origin: 'https://sprite.christiansystems.org', 'access-control-request-method': 'PROPFIND' } });
-    assert.equal(pre.status, 204); assert.equal(pre.headers.get('access-control-allow-origin'), 'https://sprite.christiansystems.org');
-    assert.equal((await t.raw('POST', '/login/v2/poll', { headers: { origin: 'https://office.christiansystems.org' }, body: 'token=x' })).headers.get('access-control-allow-origin'), 'https://office.christiansystems.org');
+    // the other Mundus Novus apps reach Cloud across sites; other sites do not
+    const pre = await t.raw('OPTIONS', dav + '/', { headers: { origin: 'https://sprite.mundusnovus.org', 'access-control-request-method': 'PROPFIND' } });
+    assert.equal(pre.status, 204); assert.equal(pre.headers.get('access-control-allow-origin'), 'https://sprite.mundusnovus.org');
+    assert.equal((await t.raw('POST', '/login/v2/poll', { headers: { origin: 'https://office.mundusnovus.org' }, body: 'token=x' })).headers.get('access-control-allow-origin'), 'https://office.mundusnovus.org');
     assert.equal((await t.raw('POST', '/login/v2/poll', { headers: { origin: 'https://elsewhere.example' }, body: 'token=x' })).headers.get('access-control-allow-origin'), null);
   } finally { t.stop(); }
 });
@@ -165,7 +165,7 @@ test('sharing with Social contacts, recorded on the PDS, and share links', async
   const social = {
     contacts: async (name) => (name === 'ann' ? [{ name: 'ben', display: 'Ben', mutual: true, youFollow: true, followsYou: true }] : []),
     person: async (name) => { if (name === 'nobody') { const e = new Error('no'); e.status = 404; throw e; } return { name, display: name === 'ben' ? 'Ben' : name, did: 'did:plc:' + name }; },
-    recordShare: async (b) => { calls.push(['record', b]); return { uri: 'at://did:plc:' + b.from + '/org.christiansystems.cloud.share/3k' + calls.length }; },
+    recordShare: async (b) => { calls.push(['record', b]); return { uri: 'at://did:plc:' + b.from + '/org.mundusnovus.cloud.share/3k' + calls.length }; },
     removeShare: async (b) => { calls.push(['remove', b]); return { ok: true }; },
   };
   const t = await start({}, social);
@@ -178,7 +178,7 @@ test('sharing with Social contacts, recorded on the PDS, and share links', async
     assert.equal((await ann.call('POST', 'share', { id: choir.item.id, with: 'nobody', perm: 'edit' })).status, 404);
     // Ben has never opened Cloud; sharing still works, because Social knows him
     const s = await ann.call('POST', 'share', { id: choir.item.id, with: '@ben', perm: 'edit' });
-    assert.equal(s.status, 201); assert.match(s.share.record, /^at:\/\/did:plc:ann\/org\.christiansystems\.cloud\.share\//);
+    assert.equal(s.status, 201); assert.match(s.share.record, /^at:\/\/did:plc:ann\/org\.mundusnovus\.cloud\.share\//);
     assert.equal(calls[0][1].to, 'ben'); assert.equal(calls[0][1].file.name, 'Choir'); assert.match(calls[0][1].url, /\/shared\/\d+$/);
     const ben = await t.signIn('ben', 'Ben');
     const shared = await ben.call('GET', 'shared');
@@ -206,7 +206,7 @@ test('sharing with Social contacts, recorded on the PDS, and share links', async
   } finally { t.stop(); }
 });
 
-test('Christian Office: open, co-edit and save back', async () => {
+test('MNOffice: open, co-edit and save back', async () => {
   const t = await start({}, { contacts: async () => [], person: async (n) => ({ name: n, display: n }), recordShare: async () => ({}), removeShare: async () => ({}) });
   try {
     const ann = await t.signIn('ann', 'Ann'), ben = await t.signIn('ben', 'Ben');
@@ -238,5 +238,16 @@ test('Christian Office: open, co-edit and save back', async () => {
     // view-only people open read-only
     const c = await t.signIn('cy', 'Cy'); await ann.call('POST', 'share', { id: made.item.id, with: 'cy', perm: 'view' });
     assert.equal((await c.call('GET', 'editor/' + made.item.id)).config.editorConfig.mode, 'view');
+  } finally { t.stop(); }
+});
+
+test('the old Christian Systems address moves to the new one', async () => {
+  const t = await start();
+  try {
+    const r = await t.raw('GET', '/files/x?y=1', { headers: { 'x-forwarded-host': 'cloud.christiansystems.org' } });
+    assert.equal(r.status, 301); assert.equal(r.headers.get('location'), 'http://cloud.test/files/x?y=1');
+    const p = await t.raw('PROPFIND', '/remote.php/dav/files/ann/', { headers: { 'x-forwarded-host': 'cloud.christiansystems.org' } });
+    assert.equal(p.status, 308);
+    assert.equal((await t.raw('GET', '/healthz', { headers: { 'x-forwarded-host': 'cloud.christiansystems.org' } })).status, 200);
   } finally { t.stop(); }
 });

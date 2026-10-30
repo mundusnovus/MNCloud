@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-# Makes a built Christian Cloud.app self-contained. mac-crafter only fixes the links of libraries it recognises by
+# Makes a built MNCloud.app self-contained. mac-crafter only fixes the links of libraries it recognises by
 # Nextcloud's own names, so with our names the sync libraries stay in Contents/MacOS and they, and the command-line
 # tool, still point at folders on the build machine; the app then quits at launch. This moves every library into
 # Contents/Frameworks, points every link that leaves the bundle at Frameworks, and drops build-machine search paths.
-# Run before signing. Usage: fix-mac-bundle.py "Christian Cloud.app"
+# Run before signing. Usage: fix-mac-bundle.py "MNCloud.app"
 import os, shutil, subprocess, sys
 
 app = sys.argv[1]
