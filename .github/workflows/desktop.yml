@@ -58,6 +58,18 @@ jobs:
       - uses: actions/checkout@v4
         with: { repository: nextcloud/desktop, ref: '${{ env.UPSTREAM_REF }}', path: desktop }
       - run: sh cs/desktop/apply-branding.sh desktop
+      - name: Let everyone read the bundled files
+        # Some bundled Qt folders arrive readable only by their owner, and appimagetool refuses to pack them.
+        working-directory: desktop
+        run: |
+          python3 - <<'PY'
+          p = 'admin/linux/build-appimage.sh'
+          s = open(p).read()
+          marker = 'LD_LIBRARY_PATH="$PWD/appimagetool-squashfs-root/usr/lib"'
+          assert s.count(marker) == 1, 'build-appimage.sh changed upstream'
+          s = s.replace(marker, 'chmod -R a+rX ./squashfs-root && chmod a+rx ./squashfs-root/AppRun\n' + marker)
+          open(p, 'w').write(s)
+          PY
       - name: Build the AppImage
         id: build
         working-directory: desktop
