@@ -11,8 +11,24 @@ const fail = (status, message) => { throw new CloudError(status, message); };
 export function createAuth({ store, issuer, clientId, clientSecret, publicUrl, secret, fetchImpl = fetch }) {
   const { one, run } = store;
   let discovery = null, jwks = null;
-  async function disc() { if (!discovery) discovery = await (await fetchImpl(issuer + '/.well-known/openid-configuration')).json(); return discovery; }
-  async function keys() { if (!jwks) jwks = (await (await fetchImpl((await disc()).jwks_uri)).json()).keys; return jwks; }
+  // Keep only good answers, so a moment when Social is restarting doesn't break sign-in until Cloud restarts.
+  async function getJson(url) {
+    const r = await fetchImpl(url);
+    if (!r.ok) fail(503, 'Sign-in is unavailable for a moment. Try again.');
+    return r.json();
+  }
+  async function disc() {
+    if (!discovery) {
+      const d = await getJson(issuer + '/.well-known/openid-configuration');
+      if (!d.authorization_endpoint || !d.token_endpoint || !d.jwks_uri) fail(503, 'Sign-in is unavailable for a moment. Try again.');
+      discovery = d;
+    }
+    return discovery;
+  }
+  async function keys(fresh) {
+    if (!jwks || fresh) { const k = (await getJson((await disc()).jwks_uri)).keys; if (!Array.isArray(k) || !k.length) fail(503, 'Sign-in is unavailable for a moment. Try again.'); jwks = k; }
+    return jwks;
+  }
 
   // A small signed cookie carries the sign-in state between the redirect and the callback.
   const seal = (obj) => { const body = b64u(JSON.stringify(obj)); return body + '.' + createHmac('sha256', secret).update(body).digest('base64url'); };
@@ -47,7 +63,9 @@ export function createAuth({ store, issuer, clientId, clientSecret, publicUrl, s
   }
   async function checkIdToken(jwt, nonce) {
     const [h, p, s] = jwt.split('.'), head = JSON.parse(Buffer.from(h, 'base64url')), claims = JSON.parse(Buffer.from(p, 'base64url'));
-    const jwk = (await keys()).find((k) => k.kid === head.kid) || (await keys())[0];
+    // a key we haven't seen means Social rotated its keys: fetch them again once
+    const jwk = (await keys()).find((k) => k.kid === head.kid) || (await keys(true)).find((k) => k.kid === head.kid) || (head.kid ? null : jwks[0]);
+    if (!jwk) fail(401, 'Sign-in could not be checked. Try again.');
     if (head.alg !== 'RS256' || !jwk || !verifySig('RSA-SHA256', Buffer.from(h + '.' + p), createPublicKey({ key: jwk, format: 'jwk' }), Buffer.from(s, 'base64url'))) fail(401, 'The sign-in token was not genuine.');
     const aud = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
     if (claims.iss !== issuer || !aud.includes(clientId) || claims.exp * 1000 < Date.now() || claims.nonce !== nonce || !/^[a-z0-9-]{2,40}$/.test(claims.sub || '')) fail(401, 'The sign-in token was not for Christian Cloud.');
