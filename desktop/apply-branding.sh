@@ -1,6 +1,6 @@
 #!/bin/sh
-# Brands a checkout of nextcloud/desktop as MNCloud: names, vendor, the fixed server address, colours and
-# icons. Used by .github/workflows/desktop.yml. Nextcloud desktop: GPL-2.0-or-later; this file: Mundus Novus
+# Brands a checkout of nextcloud/desktop as Asteria Cloud: names, vendor, the fixed server address, colours and
+# icons. Used by .github/workflows/desktop.yml. Nextcloud desktop: GPL-2.0-or-later; this file: Asteria Technology
 # License 1.0 (GPL-3.0-only), compatible with it.
 set -eu
 SRC="$1"; HERE=$(cd "$(dirname "$0")" && pwd); ICON="$HERE/../brand/icons/cloud-icon.svg"
@@ -15,22 +15,22 @@ if n == 0: sys.exit("missing %s in NEXTCLOUD.cmake" % key)
 open(p, "w").write(s2)
 PY
 }
-sub APPLICATION_NAME "MNCloud"
-sub APPLICATION_SHORTNAME "MNCloud"
-sub APPLICATION_EXECUTABLE "mncloud"
-sub APPLICATION_DOMAIN "mundusnovus.org"
-sub APPLICATION_VENDOR "Mundus Novus"
+sub APPLICATION_NAME "Asteria Cloud"
+sub APPLICATION_SHORTNAME "AsteriaCloud"
+sub APPLICATION_EXECUTABLE "asteriacloud"
+sub APPLICATION_DOMAIN "asteria.technology"
+sub APPLICATION_VENDOR "Asteria Technology"
 # never empty: the build drops empty values and theme.cpp then fails to compile (the updater itself is off)
-sub APPLICATION_UPDATE_URL "https://mundusnovus.org/downloads/"
-sub APPLICATION_SERVER_URL "https://cloud.mundusnovus.org"
-sub APPLICATION_REV_DOMAIN "org.mundusnovus.cloud"
-sub APPLICATION_REV_DOMAIN_DBUS "cloud.mundusnovus.org"
-sub APPLICATION_VIRTUALFILE_SUFFIX "mncloud"
-sub LINUX_PACKAGE_SHORTNAME "mncloud"
-sub NEXTCLOUD_BACKGROUND_COLOR "#17449a"
+sub APPLICATION_UPDATE_URL "https://asteria.technology/downloads/"
+sub APPLICATION_SERVER_URL "https://cloud.asteria.technology"
+sub APPLICATION_REV_DOMAIN "technology.asteria.cloud"
+sub APPLICATION_REV_DOMAIN_DBUS "cloud.asteria.technology"
+sub APPLICATION_VIRTUALFILE_SUFFIX "asteriacloud"
+sub LINUX_PACKAGE_SHORTNAME "asteriacloud"
+sub NEXTCLOUD_BACKGROUND_COLOR "#116674"
 # icons: the name the build looks for on each platform
-for name in MNCloud org.mundusnovus.cloud.mncloud; do
+for name in AsteriaCloud technology.asteria.cloud.asteriacloud; do
   cp "$ICON" "$SRC/theme/colored/$name-icon.svg"
   cp "$ICON" "$SRC/theme/colored/$name-sidebar-icon.svg" 2>/dev/null || true
 done
-echo "branded $SRC as MNCloud"
+echo "branded $SRC as Asteria Cloud"

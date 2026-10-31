@@ -1,4 +1,4 @@
-# MNCloud: one small Node service. Accounts come from Social, files go to the storage bucket,
+# Asteria Cloud: one small Node service. Accounts come from Social, files go to the storage bucket,
 # and the list of files, shares and versions is a SQLite database on the /data volume.
 FROM node:24-slim
 ENV NODE_ENV=production PORT=8080 DATA_DIR=/data

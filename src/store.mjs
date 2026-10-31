@@ -1,4 +1,4 @@
-// MNCloud's file system: folders and files in SQLite, contents in the blob store (blobs.mjs). Every write
+// Asteria Cloud's file system: folders and files in SQLite, contents in the blob store (blobs.mjs). Every write
 // checks the account's allowance (3 GB) and the service's capacity (256 GB) inside one transaction, so neither can be
 // exceeded. Overwrites keep the previous contents as a version; deletes go to the trash first. Both count toward the
 // allowance, the way the person would expect.
@@ -65,7 +65,7 @@ export function createStore({ dataDir, blobs, quota = 3 * GB, capacity = 256 * G
     if (grow <= 0) return;
     const u = user(owner);
     if (used(owner) + grow > u.quota) fail(507, 'Your Cloud is full. Empty the trash or delete something to make room.');
-    if (total() + grow > capacity) fail(507, 'MNCloud is full for now. Your file was not saved.');
+    if (total() + grow > capacity) fail(507, 'Asteria Cloud is full for now. Your file was not saved.');
   }
 
   // ---------------------------------------------------------------- nodes

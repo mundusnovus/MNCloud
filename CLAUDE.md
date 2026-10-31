@@ -1,4 +1,4 @@
-# MNCloud
+# Asteria Cloud
 
 Read and follow AGENTS.md.
 

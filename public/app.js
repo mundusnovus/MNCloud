@@ -1,4 +1,4 @@
-/* MNCloud in the browser. Routes: /files/<folder>, /recent, /shared, /trash, /devices, /search?q=.
+/* Asteria Cloud in the browser. Routes: /files/<folder>, /recent, /shared, /trash, /devices, /search?q=.
    Views are built from DOM nodes, never from HTML strings, so no file name can run as code. */
 (function () {
   'use strict';
@@ -59,7 +59,7 @@
     var mine = it.owner === me.id, items = [];
     if (ctx === 'trash') items = [item('Put back', function () { act(api('POST', 'restore', { id: it.id }), 'Put back'); }), h('hr'), item('Delete forever', function () { purge(it); }, 'danger')];
     else {
-      if (!it.dir && it.office) items.push(item('Open in MNOffice', function () { location.href = '/edit/' + it.id; }));
+      if (!it.dir && it.office) items.push(item('Open in Asteria Office', function () { location.href = '/edit/' + it.id; }));
       if (it.dir) items.push(item('Open', function () { go('/files/' + it.id); }));
       if (!it.dir) items.push(item('Download', function () { location.href = '/api/download/' + it.id; }));
       if (mine) items.push(item('Share', function () { shareSheet(it); }));
@@ -128,8 +128,8 @@
           h('div', {}, h('b', { text: c.display }), h('small', { text: '@' + c.name + (c.mutual ? ' · friends' : c.youFollow ? ' · you follow' : ' · follows you') })),
           h('button', { class: 'btn small', type: 'button', text: 'Share', onclick: function () { shareWith(c.name); } })));
       });
-      if (!contacts.childNodes.length && t) contacts.appendChild(h('div', { class: 'person' }, h('span', { class: 'avatar', text: t[0] || '?' }), h('div', {}, h('b', { text: '@' + t }), h('small', { text: 'Share with this Mundus Novus account' })), h('button', { class: 'btn small', type: 'button', text: 'Share', onclick: function () { shareWith(t); } })));
-      if (!contacts.childNodes.length && !t) contacts.appendChild(h('p', { class: 'note', text: 'Your friends on Social show up here. You can also type anyone’s Mundus Novus name.' }));
+      if (!contacts.childNodes.length && t) contacts.appendChild(h('div', { class: 'person' }, h('span', { class: 'avatar', text: t[0] || '?' }), h('div', {}, h('b', { text: '@' + t }), h('small', { text: 'Share with this Asteria account' })), h('button', { class: 'btn small', type: 'button', text: 'Share', onclick: function () { shareWith(t); } })));
+      if (!contacts.childNodes.length && !t) contacts.appendChild(h('p', { class: 'note', text: 'Your friends on Social show up here. You can also type anyone’s Asteria Technology name.' }));
     }
     var allContacts = [], sharedTo = [];
     q.addEventListener('input', function () { drawContacts(allContacts); });
@@ -241,14 +241,14 @@
     else if (p === '/search') { var q = new URLSearchParams(location.search).get('q') || ''; document.getElementById('q').value = q; out = flat('Results for “' + q + '”', 'search?q=' + encodeURIComponent(q), 'search', ['Nothing found', 'Try another name.']); }
     else { go('/files/', true); return; }
     document.querySelectorAll('[data-place]').forEach(function (a) { a.setAttribute('aria-current', a.dataset.place === place ? 'page' : 'false'); });
-    Promise.resolve(out).then(function (nodes) { main.textContent = ''; add(main, nodes); document.title = (main.querySelector('h1') ? main.querySelector('h1').textContent + ' · ' : '') + 'MNCloud'; })
+    Promise.resolve(out).then(function (nodes) { main.textContent = ''; add(main, nodes); document.title = (main.querySelector('h1') ? main.querySelector('h1').textContent + ' · ' : '') + 'Asteria Cloud'; })
       .catch(function (e) { main.textContent = ''; add(main, empty('Not here', e.message)); });
   }
   function refreshSpace() {
     return api('GET', 'me').then(function (r) {
       me = r.user; csrf = r.csrf; office = r.office;
       var u = r.usage, pct = Math.min(100, 100 * u.used / u.quota), s = document.getElementById('space');
-      s.textContent = ''; add(s, [h('b', { text: bytes(u.used) }), ' of ' + bytes(u.quota) + ' used', h('div', { class: 'meter', role: 'meter', 'aria-valuemin': 0, 'aria-valuemax': u.quota, 'aria-valuenow': u.used, 'aria-label': 'Storage used' }, h('i', { style: 'width:' + pct.toFixed(1) + '%' })), u.used > u.quota * 0.9 ? 'Nearly full. Emptying the trash frees space.' : 'Free with your Mundus Novus account.']);
+      s.textContent = ''; add(s, [h('b', { text: bytes(u.used) }), ' of ' + bytes(u.quota) + ' used', h('div', { class: 'meter', role: 'meter', 'aria-valuemin': 0, 'aria-valuemax': u.quota, 'aria-valuenow': u.used, 'aria-label': 'Storage used' }, h('i', { style: 'width:' + pct.toFixed(1) + '%' })), u.used > u.quota * 0.9 ? 'Nearly full. Emptying the trash frees space.' : 'Free with your Asteria account.']);
       var who = document.getElementById('who'); who.textContent = '';
       add(who, [h('span', { text: me.display }), h('span', { class: 'avatar', text: (me.display || me.id)[0] }), h('form', { method: 'post', action: '/logout' }, h('button', { class: 'btn small quiet', type: 'submit', text: 'Sign out' }))]);
     });

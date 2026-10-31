@@ -1,61 +1,61 @@
-/* Mundus Novus design tokens. One file for the site, the apps and the social network.
+/* Asteria Technology design tokens. One file for the site, the apps and the social network.
    Light and dark follow the system unless a page sets data-theme="light" or "dark" on <html>. */
-@font-face { font-family: "Chancel"; src: url("Chancel-Regular.woff") format("woff"); font-display: swap; }
+@font-face { font-family: "Asteria Pixel"; src: url("AsteriaPixel-Regular.woff") format("woff"); font-display: swap; }
 
 :root {
-  /* the palette: an old map of the New World. Sea, gold and parchment, with a terracotta for warnings */
-  --mn-sea: #2a62c9;      --mn-sea-bright: #4a82e6; --mn-sea-deep: #17449a; --mn-abyss: #0c2558;
-  --mn-gold: #e9b04b;     --mn-gold-light: #ffd47e; --mn-gold-deep: #a8761a;
-  --mn-ink: #0c1222;      --mn-night: #131c31;      --mn-coal: #1c2742;
-  --mn-cream: #f4ecdb;    --mn-paper: #e5d8bd;      --mn-stone: #faf7f0;
-  --mn-alert: #c4432d;    --mn-alert-bright: #e0603f;
+  /* the palette: teal and gold on ink, with parchment, and a terracotta for warnings */
+  --as-sea: #1c8c9e;      --as-sea-bright: #3bb3c3; --as-sea-deep: #116674; --as-abyss: #0a3a45;
+  --as-gold: #e9b04b;     --as-gold-light: #ffd47e; --as-gold-deep: #a8761a;
+  --as-ink: #0a1518;      --as-night: #12232a;      --as-coal: #1a3038;
+  --as-cream: #f4ecdb;    --as-paper: #e5d8bd;      --as-stone: #faf7f0;
+  --as-alert: #c4432d;    --as-alert-bright: #e0603f;
 
-  /* type: Chancel for display, the system for reading and for interfaces */
-  --mn-display: "Chancel", ui-monospace, monospace;
-  --mn-text: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mn-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
-  --mn-step--1: clamp(.83rem, .8rem + .15vw, .9rem);
-  --mn-step-0: clamp(1rem, .96rem + .2vw, 1.1rem);
-  --mn-step-1: clamp(1.25rem, 1.15rem + .5vw, 1.5rem);
-  --mn-step-2: clamp(1.6rem, 1.35rem + 1.2vw, 2.2rem);
-  --mn-step-3: clamp(2.2rem, 1.6rem + 3vw, 4rem);
-  --mn-step-4: clamp(3rem, 1.8rem + 6vw, 7rem);
+  /* type: Asteria Pixel for display, the system for reading and for interfaces */
+  --as-display: "Asteria Pixel", ui-monospace, monospace;
+  --as-text: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --as-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+  --as-step--1: clamp(.83rem, .8rem + .15vw, .9rem);
+  --as-step-0: clamp(1rem, .96rem + .2vw, 1.1rem);
+  --as-step-1: clamp(1.25rem, 1.15rem + .5vw, 1.5rem);
+  --as-step-2: clamp(1.6rem, 1.35rem + 1.2vw, 2.2rem);
+  --as-step-3: clamp(2.2rem, 1.6rem + 3vw, 4rem);
+  --as-step-4: clamp(3rem, 1.8rem + 6vw, 7rem);
 
   /* space, radius, motion */
-  --mn-space: clamp(16px, 2.4vw, 28px);
-  --mn-radius-s: 8px; --mn-radius: 14px; --mn-radius-l: 22px;
-  --mn-ease: cubic-bezier(.32, .08, .24, 1);      /* settle */
-  --mn-ease-out: cubic-bezier(.16, 1, .3, 1);     /* arrive */
-  --mn-ease-spring: cubic-bezier(.34, 1.4, .64, 1);
-  --mn-fast: .18s; --mn-med: .32s; --mn-slow: .7s;
+  --as-space: clamp(16px, 2.4vw, 28px);
+  --as-radius-s: 8px; --as-radius: 14px; --as-radius-l: 22px;
+  --as-ease: cubic-bezier(.32, .08, .24, 1);      /* settle */
+  --as-ease-out: cubic-bezier(.16, 1, .3, 1);     /* arrive */
+  --as-ease-spring: cubic-bezier(.34, 1.4, .64, 1);
+  --as-fast: .18s; --as-med: .32s; --as-slow: .7s;
 
   /* the light appearance */
   color-scheme: light dark;
-  --mn-bg: var(--mn-stone);
-  --mn-surface: #ffffff;
-  --mn-surface-2: #efe9dc;
-  --mn-glass: rgb(255 255 255 / .72);
-  --mn-line: rgb(12 18 34 / .12);
-  --mn-fg: var(--mn-ink);
-  --mn-fg-2: #4a5468;
-  --mn-accent: var(--mn-sea-deep);
-  --mn-accent-fg: #ffffff;
-  --mn-highlight: var(--mn-gold-deep);
-  --mn-focus: var(--mn-gold);
-  --mn-shadow: 0 1px 2px rgb(12 18 34 / .06), 0 8px 24px rgb(12 18 34 / .08);
+  --as-bg: var(--as-stone);
+  --as-surface: #ffffff;
+  --as-surface-2: #efe9dc;
+  --as-glass: rgb(255 255 255 / .72);
+  --as-line: rgb(10 21 24 / .12);
+  --as-fg: var(--as-ink);
+  --as-fg-2: #475a60;
+  --as-accent: var(--as-sea-deep);
+  --as-accent-fg: #ffffff;
+  --as-highlight: var(--as-gold-deep);
+  --as-focus: var(--as-gold);
+  --as-shadow: 0 1px 2px rgb(10 21 24 / .06), 0 8px 24px rgb(10 21 24 / .08);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --mn-bg: var(--mn-ink); --mn-surface: var(--mn-night); --mn-surface-2: var(--mn-coal);
-    --mn-glass: rgb(19 28 49 / .7); --mn-line: rgb(244 236 219 / .12);
-    --mn-fg: var(--mn-cream); --mn-fg-2: #b4bdd0; --mn-accent: var(--mn-sea-bright); --mn-highlight: var(--mn-gold); --mn-alert: var(--mn-alert-bright);
-    --mn-shadow: 0 1px 2px rgb(0 0 0 / .4), 0 12px 32px rgb(0 0 0 / .45);
+    --as-bg: var(--as-ink); --as-surface: var(--as-night); --as-surface-2: var(--as-coal);
+    --as-glass: rgb(18 35 42 / .7); --as-line: rgb(244 236 219 / .12);
+    --as-fg: var(--as-cream); --as-fg-2: #a9c2c6; --as-accent: var(--as-sea-bright); --as-highlight: var(--as-gold); --as-alert: var(--as-alert-bright);
+    --as-shadow: 0 1px 2px rgb(0 0 0 / .4), 0 12px 32px rgb(0 0 0 / .45);
   }
 }
 :root[data-theme="dark"] {
-  --mn-bg: var(--mn-ink); --mn-surface: var(--mn-night); --mn-surface-2: var(--mn-coal);
-  --mn-glass: rgb(19 28 49 / .7); --mn-line: rgb(244 236 219 / .12);
-  --mn-fg: var(--mn-cream); --mn-fg-2: #b4bdd0; --mn-accent: var(--mn-sea-bright); --mn-highlight: var(--mn-gold); --mn-alert: var(--mn-alert-bright);
-  --mn-shadow: 0 1px 2px rgb(0 0 0 / .4), 0 12px 32px rgb(0 0 0 / .45);
+  --as-bg: var(--as-ink); --as-surface: var(--as-night); --as-surface-2: var(--as-coal);
+  --as-glass: rgb(18 35 42 / .7); --as-line: rgb(244 236 219 / .12);
+  --as-fg: var(--as-cream); --as-fg-2: #a9c2c6; --as-accent: var(--as-sea-bright); --as-highlight: var(--as-gold); --as-alert: var(--as-alert-bright);
+  --as-shadow: 0 1px 2px rgb(0 0 0 / .4), 0 12px 32px rgb(0 0 0 / .45);
 }
-@media (prefers-reduced-motion: reduce) { :root { --mn-fast: .01ms; --mn-med: .01ms; --mn-slow: .01ms; } }
+@media (prefers-reduced-motion: reduce) { :root { --as-fast: .01ms; --as-med: .01ms; --as-slow: .01ms; } }

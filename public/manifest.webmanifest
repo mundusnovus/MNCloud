@@ -1,2 +1,2 @@
-{ "name": "MNCloud", "short_name": "Cloud", "start_url": "/files/", "scope": "/", "display": "standalone", "background_color": "#0c1222", "theme_color": "#0c1222",
+{ "name": "Asteria Cloud", "short_name": "Cloud", "start_url": "/files/", "scope": "/", "display": "standalone", "background_color": "#0a1518", "theme_color": "#0a1518",
   "icons": [{ "src": "/brand/cloud-192.png", "sizes": "192x192", "type": "image/png" }, { "src": "/brand/cloud-512.png", "sizes": "512x512", "type": "image/png" }] }

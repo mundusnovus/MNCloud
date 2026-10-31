@@ -11,4 +11,4 @@ jobs:
         with:
           node-version: 24
       - run: node --test test/*.test.mjs
-      - run: docker build -t mn-cloud:test .
+      - run: docker build -t asteria-cloud:test .

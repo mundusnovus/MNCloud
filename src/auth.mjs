@@ -1,4 +1,4 @@
-// Who is asking. People sign in with their Mundus Novus account (OpenID Connect against Social, with PKCE).
+// Who is asking. People sign in with their Asteria account (OpenID Connect against Social, with PKCE).
 // Apps and the desktop client get a device key through the same sign-in flow Nextcloud clients use (Login Flow v2),
 // so Sprite, Box, Office and the sync app need no password of their own. Keys are stored hashed.
 import { createHash, createHmac, createPublicKey, randomBytes, timingSafeEqual, verify as verifySig } from 'node:crypto';
@@ -56,7 +56,7 @@ export function createAuth({ store, issuer, clientId, clientSecret, publicUrl, s
     const r = await fetchImpl(d.token_endpoint, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', authorization: 'Basic ' + Buffer.from(clientId + ':' + clientSecret).toString('base64') },
       body: new URLSearchParams({ grant_type: 'authorization_code', code: query.get('code'), redirect_uri: publicUrl + '/auth/callback', code_verifier: st.verifier }) });
     const tok = await r.json();
-    if (!r.ok || !tok.id_token) fail(502, 'Mundus Novus sign-in did not answer as expected.');
+    if (!r.ok || !tok.id_token) fail(502, 'Asteria Technology sign-in did not answer as expected.');
     const claims = await checkIdToken(tok.id_token, st.nonce);
     const u = store.ensureUser(claims.sub, claims.name || claims.preferred_username || claims.sub, claims.did);
     return { user: u, session: newSession(u.id), back: st.back };
@@ -68,7 +68,7 @@ export function createAuth({ store, issuer, clientId, clientSecret, publicUrl, s
     if (!jwk) fail(401, 'Sign-in could not be checked. Try again.');
     if (head.alg !== 'RS256' || !jwk || !verifySig('RSA-SHA256', Buffer.from(h + '.' + p), createPublicKey({ key: jwk, format: 'jwk' }), Buffer.from(s, 'base64url'))) fail(401, 'The sign-in token was not genuine.');
     const aud = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
-    if (claims.iss !== issuer || !aud.includes(clientId) || claims.exp * 1000 < Date.now() || claims.nonce !== nonce || !/^[a-z0-9-]{2,40}$/.test(claims.sub || '')) fail(401, 'The sign-in token was not for MNCloud.');
+    if (claims.iss !== issuer || !aud.includes(clientId) || claims.exp * 1000 < Date.now() || claims.nonce !== nonce || !/^[a-z0-9-]{2,40}$/.test(claims.sub || '')) fail(401, 'The sign-in token was not for Asteria Cloud.');
     return claims;
   }
 
@@ -104,7 +104,7 @@ export function createAuth({ store, issuer, clientId, clientSecret, publicUrl, s
   // ---------------------------------------------------------------- Login Flow v2 (device sign-in)
   function flowStart(name) {
     const token = b64u(randomBytes(32)), poll = b64u(randomBytes(48));
-    run('insert into flows (token, poll, name, created) values (?, ?, ?, ?)', token, poll, String(name || 'A Mundus Novus app').slice(0, 80), Date.now());
+    run('insert into flows (token, poll, name, created) values (?, ?, ?, ?)', token, poll, String(name || 'A Asteria Technology app').slice(0, 80), Date.now());
     run('delete from flows where created < ?', Date.now() - 20 * 60000);
     return { poll: { token: poll, endpoint: publicUrl + '/login/v2/poll' }, login: publicUrl + '/login/v2/flow/' + token };
   }

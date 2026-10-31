@@ -1,4 +1,4 @@
-/* Opens a Cloud file in MNOffice. Cloud signs the editor settings; everyone on the same version shares one
+/* Opens a Cloud file in Asteria Office. Cloud signs the editor settings; everyone on the same version shares one
    document key, so co-editors see each other's changes as they type. */
 (function () {
   'use strict';
@@ -9,7 +9,7 @@
   fetch('/api/editor/' + id + '?lang=' + encodeURIComponent((navigator.language || 'en').slice(0, 2)), { credentials: 'same-origin' })
     .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || 'This document cannot be opened.'); return j; }); })
     .then(function (r) {
-      document.title = r.item.name + ' · MNOffice';
+      document.title = r.item.name + ' · Asteria Office';
       var s = document.createElement('script');
       s.src = r.api;
       s.onload = function () {
@@ -21,7 +21,7 @@
         r.config.width = '100%'; r.config.height = '100%';
         new window.DocsAPI.DocEditor('editor', r.config);
       };
-      s.onerror = function () { clearTimeout(slow); say('MNOffice is not answering', 'Try again in a moment.'); };
+      s.onerror = function () { clearTimeout(slow); say('Asteria Office is not answering', 'Try again in a moment.'); };
       document.head.appendChild(s);
     })
     .catch(function (e) { clearTimeout(slow); say('Not here', e.message); });
